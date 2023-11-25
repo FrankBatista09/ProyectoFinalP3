@@ -1,0 +1,99 @@
+﻿@page "/ingresarDatos"
+
+<div class="row">
+    <div class ="col-sm-6">
+        <h3>Agrega un vehiculo</h3>
+        <form @onsubmit = "Finalizar">
+            <div class="form-group">
+                <label>Placa</label>
+                <input type="text" required @bind= "v.Placa" placeholder="Ingresar placa" class="form-control"/>
+                </div>
+            <div class="form-group">   
+                <label>Marca</label>
+                <input type="text" required @bind ="v.Modelo" placeholder="Ingresar Modelo" class="form-control" />
+                </div>
+            <div class="form-group">    
+                <label>Color</label>
+                <input type="text" required @bind ="v.Color" placeholder="Ingresar Color" class="form-control" />
+                </div>
+            <div class="form-group">    
+                <label>Descripcion</label>
+                <input type="text" required @bind ="v.Descripcion" placeholder="Ingresar Descripcion" class="form-control" />
+            </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" class="btn btn-success" value="Finalizar" />
+            </div>
+        </form>
+    </div>
+
+    <div class="col-sm-4">
+        <h3>Agrega una persona</h3>
+        <form @onsubmit="Agregar">
+            <div class="form-group">
+                <label>Cedula</label>
+                <input type="text" required @bind="p.Cedula" placeholder="Ingresar cedula" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-info" value="Buscar" @onclick="Buscar"/>
+            </div>
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" readonly @bind="p.Nombre" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Apellido</label>
+                <input type="text" readonly @bind="p.Apellido" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Lugar</label>
+                <input type="text" required @bind="p.Lugar" placeholder="Ingresar el lugar" class="form-control" />
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Agregar persona (@count)" />
+            </div>
+        </form>
+    </div>
+
+
+</div>
+
+@code {
+    Vehiculo v = new Vehiculo();
+    Persona p = new Persona();
+    Api a = new Api();
+
+    int count = 0;
+
+    Access ngr = new Access();
+
+    async Task Finalizar()
+    {
+        if (count > 0)
+        {
+            await ngr.InsertarVehiculosAsync(v);
+            v = new Vehiculo();
+            p = new Persona();
+            count = 0;
+        }
+        
+    }
+
+    void Agregar()
+    {
+        if (p.Nombre != "No encontrado")
+        {
+            v.Personas.Add(p);
+            count++;
+            p = new Persona();
+        }
+     
+        }
+    void Buscar()
+    {
+        p = a.Consulta(p.Cedula);
+        a = new Api();
+    }
+
+
+}
